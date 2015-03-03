@@ -23,6 +23,27 @@ function event_search_menu() {
 }
 
 /**
+ * Implements hook_libraries_info().
+ */
+function event_search_libraries_info() {
+  $libraries['quicksearch'] = array(
+    'name' => 'Quicksearch',
+    'vendor url' => 'https://github.com/riklomas/quicksearch',
+    'download url' => 'https://github.com/riklomas/quicksearch',
+    'version callback' => 'quicksearch_version_callback',
+    'files' => array(
+      'js' => array('jquery.quicksearch.js'),
+    ),
+  );
+
+  function quicksearch_version_callback() {
+    return TRUE;
+  }
+
+  return $libraries;
+}
+
+/**
  * @param $node
  * @param $form_state
  * @return mixed
