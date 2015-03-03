@@ -8,6 +8,7 @@
 
 .month-list span {
     padding: 0 30px;
+    margin: 0 0 10px;
     cursor: pointer;
 }
 
