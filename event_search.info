@@ -1,0 +1,5 @@
+name = Event Search
+description = Event search filter for events list
+package = Custom
+version = "1.0"
+core = 7.x

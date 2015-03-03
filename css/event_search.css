@@ -1,0 +1,28 @@
+.month-list {
+    text-align: center;
+    text-transform: uppercase;
+    padding: 5px 20px;
+    color: #ffffff;
+    background-color: #000000;
+}
+
+.month-list span {
+    padding: 0 30px;
+    cursor: pointer;
+}
+
+#event-search-form .form-item {
+    display: inline-block;
+}
+
+#event-search-form .form-item-search-bar {
+    margin: 0 20px 0 0;
+}
+
+#event-search-form label {
+    display: inline-block;
+}
+
+#event-search-form input {
+    max-width: 140px;
+}

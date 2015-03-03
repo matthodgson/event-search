@@ -1,0 +1,201 @@
+<?php
+/**
+* @file
+* Event search filter for events list
+*/
+
+/**
+ * Implements hook_menu().
+ */
+function event_search_menu() {
+  $items = array();
+
+  $items['admin/config/user-interface/event_search'] = array(
+    'title' => 'Event Search Widget',
+    'description' => 'A tool for live filtering a definable list ie.. a Views list of events',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('event_search_admin_form'),
+    'access arguments' => array('administer users'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+
+  return $items;
+}
+
+/**
+ * @param $node
+ * @param $form_state
+ * @return mixed
+ *
+ * Administration form
+ */
+
+function event_search_admin_form($node, &$form_state) {
+  $form['event_search_row_selector'] = array(
+    '#type' => 'textfield',
+    '#default_value' => variable_get('event_search_row_selector', '.event-search-enabled .views-row'),
+    '#title' => t('Row Selector'),
+    '#required' => TRUE,
+    '#description' => t('ie.. .views-row'),
+  );
+
+  $form['event_search_row_start_date_selector'] = array(
+    '#type' => 'textfield',
+    '#default_value' => variable_get('event_search_row_start_date_selector', '.field-name-field-date'),
+    '#title' => t('Row Start Date Selector'),
+    '#required' => TRUE,
+    '#description' => t('The selector for the outer wrapper of the start date used in the row.'),
+  );
+
+  $form['event_search_row_end_date_selector'] = array(
+    '#type' => 'textfield',
+    '#default_value' => variable_get('event_search_row_end_date_selector', '.date-display-end'),
+    '#title' => t('Row End Date Selector'),
+    '#required' => TRUE,
+    '#description' => t('The selector for the outer wrapper of the end date used in the row.'),
+  );
+
+  $form['event_search_search_target_selector'] = array(
+    '#type' => 'textfield',
+    '#default_value' => variable_get('event_search_search_target_selector', 'h2'),
+    '#title' => t('Search Target Selector'),
+    '#required' => TRUE,
+    '#description' => t('This is the element that will be used to filter items.'),
+  );
+
+  $form['event_search_number_of_months'] = array(
+    '#type' => 'textfield',
+    '#default_value' => variable_get('event_search_number_of_months', 4),
+    '#title' => t('Number of months to display'),
+    '#required' => TRUE,
+    '#description' => t(''),
+  );
+
+  return system_settings_form($form);
+}
+
+/**
+ * Implements hook_block_info().
+ */
+function event_search_block_info() {
+  $blocks = array();
+
+  $blocks['event_search'] = array(
+    'info' => t('Event Search'),
+    'cache' => DRUPAL_NO_CACHE,
+  );
+
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function event_search_block_view($block_name = '') {
+  if ($block_name == 'event_search') {
+
+    $content = array(
+      'html' => array(
+        '#type' => 'markup',
+        '#markup' => '<div class="month-list"><span class="past-events">Past Events</span><span class="view-all">All Events</span></div>',
+      ),
+      'form' => drupal_get_form('event_search_form'),
+    );
+
+    $block = array(
+      'subject' => '',
+      'content' => $content,
+    );
+
+    return $block;
+  }
+}
+
+/**
+ * Implements hook_requirements().
+ */
+function event_search_requirements($phase) {
+  $requirements = array();
+
+  // Ensure translations don't break during installation.
+  $t = get_t();
+
+  $requirements['quicksearch'] = array(
+    'title' => $t('Quicksearch Library'),
+  );
+
+  $libraries = libraries_get_libraries();
+  if (isset($libraries['quicksearch'])) {
+    $requirements['quicksearch']['value'] = $t('Installed');
+    $requirements['quicksearch']['severity'] = REQUIREMENT_OK;
+  }
+  else {
+    $requirements['quicksearch']['value'] = $t('Not Installed');
+    $requirements['quicksearch']['severity'] = REQUIREMENT_ERROR;
+    $requirements['quicksearch']['description'] = $t('Please install the quicksearch library %url.', array('%url' => 'https://github.com/riklomas/quicksearch'));
+  }
+
+  return $requirements;
+}
+
+/**
+ * @param $node
+ * @param $form_state
+ * @return mixed
+ *
+ * Event Search Form
+ */
+function event_search_form($node, &$form_state) {
+  $settings = array(
+    'eventSearch' => array(
+      'rowSelector' => variable_get('event_search_row_selector', '.event-search-enabled .views-row'),
+      'rowStartDate' => variable_get('event_search_row_start_date_selector', '.field-name-field-date'),
+      'rowEndDate' => variable_get('event_search_row_end_date_selector', '.date-display-end'),
+      'searchTarget' => variable_get('event_search_search_target_selector', 'h2'),
+      'numberOfMonths' => variable_get('event_search_number_of_months', 4),
+    ),
+  );
+
+  drupal_add_js($settings, 'setting');
+
+  $form['#attached'] = array(
+    'library' => array(
+      array('system', 'ui.datepicker'),
+    ),
+    'libraries_load' => array(
+      array('quicksearch'),
+    ),
+    'js' => array(
+      drupal_get_path('module', 'event_search') . '/js/event_search.js',
+    ),
+    'css' => array(
+      drupal_get_path('module', 'event_search') . '/css/event_search.css',
+    ),
+  );
+
+  $form['search_bar'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Search by:'),
+    '#attributes' => array(
+      'placeholder' => t('Event Name')
+    ),
+  );
+
+  $form['date_start'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Date Range:'),
+    '#attributes' => array(
+      'placeholder' => t('mm/dd/yyyy')
+    ),
+  );
+
+  $form['date_end'] = array(
+    '#type' => 'textfield',
+    '#title' => t('to'),
+    '#attributes' => array(
+      'placeholder' => t('mm/dd/yyyy')
+    ),
+  );
+
+  return $form;
+}
