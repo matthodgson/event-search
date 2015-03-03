@@ -177,7 +177,11 @@ function event_search_form($node, &$form_state) {
     '#type' => 'textfield',
     '#title' => t('Search by:'),
     '#attributes' => array(
-      'placeholder' => t('Event Name')
+      'placeholder' => t('Event Name'),
+      'class' => array(
+        'qs-input',
+        'event-name',
+      ),
     ),
   );
 
@@ -185,7 +189,7 @@ function event_search_form($node, &$form_state) {
     '#type' => 'textfield',
     '#title' => t('Date Range:'),
     '#attributes' => array(
-      'placeholder' => t('mm/dd/yyyy')
+      'placeholder' => t('mm/dd/yyyy'),
     ),
   );
 
@@ -193,7 +197,7 @@ function event_search_form($node, &$form_state) {
     '#type' => 'textfield',
     '#title' => t('to'),
     '#attributes' => array(
-      'placeholder' => t('mm/dd/yyyy')
+      'placeholder' => t('mm/dd/yyyy'),
     ),
   );
 

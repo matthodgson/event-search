@@ -35,8 +35,8 @@
                 $(this).quicksearch(ROW_SELECTOR, {
                     selector: SEARCH_TARGET_SELECTOR
                 });
-                $(START_DATE_INPUT).val('mm/dd/yyyy');
-                $(END_DATE_INPUT).val('mm/dd/yyyy');
+                $(START_DATE_INPUT).val('');
+                $(END_DATE_INPUT).val('');
             });
 
             var endDateEntered = false;
