@@ -2,13 +2,13 @@
     text-align: center;
     text-transform: uppercase;
     padding: 5px 20px;
+    margin: 0 0 10px;
     color: #ffffff;
     background-color: #000000;
 }
 
 .month-list span {
     padding: 0 30px;
-    margin: 0 0 10px;
     cursor: pointer;
 }
 
